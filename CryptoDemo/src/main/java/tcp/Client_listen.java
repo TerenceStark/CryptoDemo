@@ -17,7 +17,17 @@ public class Client_listen implements Runnable {
     public void run() {
         ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
         while (true) {
-            System.out.println("From Server" + socket.getRemoteSocketAddress() + objectInputStream.readObject());
+            Object object;
+            if ((object = objectInputStream.readObject())!= null) {
+                String s = object + "";
+                if (s.equals("{\"break\":\"exit\"}")) {
+                    socket.shutdownInput();
+                    break;
+                } else {
+                    System.out.println("From Server" + socket.getRemoteSocketAddress() + object);
+                }
+            }
         }
+        socket.close();
     }
 }

@@ -31,15 +31,14 @@ public class RC4CipherService implements CipherService {
     private String core(String text, String key) {
         int[] state = new int[256];
         char[] keySchedule = new char[text.length()];
-
         StringBuilder cipherText = new StringBuilder();
+        this.scheduleKey(state, key);
+        this.genPseudoRandom(state, keySchedule, key.length());
 
-        scheduleKey(state, key);
-        genPseudoRandom(state, keySchedule, key.length());
-
-        for (int i = 0; i < text.length(); i++) {
-            cipherText.append((char) (text.charAt(i) ^ keySchedule[i]));
+        for(int i = 0; i < text.length(); ++i) {
+            cipherText.append((char)(text.charAt(i) ^ keySchedule[i]));
         }
+
         return cipherText.toString();
     }
 
@@ -51,11 +50,14 @@ public class RC4CipherService implements CipherService {
      * @param plaintextLength 明文长度
      */
     private void genPseudoRandom(int[] state, char[] keySchedule, int plaintextLength) {
-        for (int i = 0, j = 0, k = 0; k < plaintextLength; k++) {
+        int i = 0;
+        int j = 0;
+
+        for(int k = 0; k < plaintextLength; ++k) {
             i = (i + 1) % 256;
             j = (j + state[i]) % 256;
-            swap(state, i, j);
-            keySchedule[k] = (char) (state[(state[i] + state[j]) % 256]);
+            this.swap(state, i, j);
+            keySchedule[k] = (char)state[(state[i] + state[j]) % 256];
         }
     }
 
@@ -66,13 +68,15 @@ public class RC4CipherService implements CipherService {
      * @param key   密钥
      */
     private void scheduleKey(int[] state, String key) {
-        for (int i = 0; i < 256; i++) {
-            state[i] = i;
+        int j;
+        for(j = 0; j < 256; state[j] = j++) {
         }
 
-        for (int j = 0, i = 0; i < 256; i++) {
+        j = 0;
+
+        for(int i = 0; i < 256; ++i) {
             j = (j + state[i] + key.charAt(i % key.length())) % 256;
-            swap(state, i, j);
+            this.swap(state, i, j);
         }
     }
 

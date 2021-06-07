@@ -269,4 +269,21 @@ public class ArrayUtil {
         }
         return buffer;
     }
+
+    public static byte[] toByteArray(BigInteger bi) {
+        byte[] array = bi.toByteArray();
+        // 这种情况是转换的array超过25位
+        if (array[0] == 0) {
+            byte[] tmp = new byte[array.length - 1];
+            System.arraycopy(array, 1, tmp, 0, tmp.length);
+            array = tmp;
+        }
+        // 假如转换的byte数组少于24位，则在前面补齐0
+        if (array.length < 24) {
+            byte[] tmp = new byte[24];
+            System.arraycopy(array, 0, tmp, 24 - array.length, array.length);
+            array = tmp;
+        }
+        return array;
+    }
 }

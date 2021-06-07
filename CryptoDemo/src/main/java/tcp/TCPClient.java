@@ -17,7 +17,7 @@ public class TCPClient {
             oos = new ObjectOutputStream(socket.getOutputStream());
             new Thread(new Client_listen(socket)).start();
             new Thread(new Client_send(socket, oos)).start();
-            new Thread(new Client_heart(socket, oos)).start();
+//          new Thread(new Client_heart(socket, oos)).start();
         }
     }
 

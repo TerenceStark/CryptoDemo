@@ -1,12 +1,12 @@
 package crypto.assymmetry;
 
-import crypto.CipherService;
+import lombok.Data;
 import lombok.ToString;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+@Data
 @ToString
 public class RSACipherService {
 
@@ -15,7 +15,7 @@ public class RSACipherService {
 
     private final BigInteger privateKey;
     private final BigInteger publicKey;
-    private final BigInteger n;
+    private final BigInteger modulus;
 
     /**
      * 密钥生成:
@@ -30,19 +30,19 @@ public class RSACipherService {
 
         BigInteger phi = (p.subtract(one)).multiply((q.subtract(one)));
 
-        n = p.multiply(q);
+        modulus = p.multiply(q);
 
         publicKey = BigInteger.valueOf(65537);
         //modInverse(BigInteger m) Returns a BigInteger whose value is (this^-1 mod m).
         privateKey = publicKey.modInverse(phi);
     }
 
-    public BigInteger encrypt(BigInteger message) {
-        return message.modPow(publicKey, n);
+    public BigInteger publicKey(BigInteger message) {
+        return message.modPow(publicKey, modulus);
     }
 
-    public BigInteger decrypt(BigInteger encrypted) {
-        return encrypted.modPow(privateKey, n);
+    public BigInteger privateKey(BigInteger encrypted) {
+        return encrypted.modPow(privateKey, modulus);
     }
 
 }

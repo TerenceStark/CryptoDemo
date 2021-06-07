@@ -3,9 +3,7 @@ package tcp;
 import lombok.SneakyThrows;
 import org.json.simple.JSONObject;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Server_listen implements Runnable {
@@ -20,7 +18,23 @@ public class Server_listen implements Runnable {
     public void run() {
         ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
         while (true) {
-            System.out.println("From Client" + socket.getRemoteSocketAddress() + objectInputStream.readObject());
+            Object object;
+            if ((object = objectInputStream.readObject())!= null) {
+                String s = object + "";
+                if (s.equals("{\"break\":\"exit\"}")) {
+                    socket.shutdownInput();
+                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+                    String close = "{\"break\":\"exit\"}";
+                    byte[] bytes = close.getBytes();
+                    bufferedOutputStream.write(bytes);
+                    bufferedOutputStream.flush();
+                    bufferedOutputStream.close();
+                    bufferedOutputStream.close();
+                    break;
+                } else {
+                    System.out.println("From Client" + socket.getRemoteSocketAddress() + s);
+                }
+            }
         }
     }
 }
